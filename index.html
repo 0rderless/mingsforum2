@@ -2,117 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MingForum - Secured & Fixed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MingCord Pro - Absolute Build</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     :root {
-      --brand: #ff4500;
-      --brand-glow: rgba(255, 69, 0, 0.4);
-      --bg: radial-gradient(circle at top left, #121212, #050505);
-      --card: rgba(30, 30, 32, 0.7);
-      --border: rgba(255, 255, 255, 0.1);
-      --text: #e1e3e6;
-      --subtext: #818384;
-      --staff: #ffd700;
-      --staff-glow: rgba(255, 215, 0, 0.3);
-      --glass: blur(12px);
+      --bg-1: #1e1f22; --bg-2: #2b2d31; --bg-3: #313338; --bg-4: #232428;
+      --text-1: #f2f3f5; --text-muted: #949ba4; --brand: #5865f2;
+      --online: #23a559; --offline: #80848e; --owner: #f1c40f;
     }
-    [data-theme="light"] {
-      --bg: #f0f2f5; --card: rgba(255, 255, 255, 0.8);
-      --border: rgba(0, 0, 0, 0.1); --text: #1c1e21; --subtext: #65676b;
-    }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; transition: 0.4s; }
-    #app-screen { display: none; height: 100vh; display: flex; }
-    nav { width: 250px; background: var(--card); backdrop-filter: var(--glass); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
-    #forum-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    header { background: var(--card); backdrop-filter: var(--glass); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    #main-feed { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-    .post-card { width: 100%; max-width: 700px; background: var(--card); backdrop-filter: var(--glass); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: 0.2s; position: relative; }
-    .staff-post { border: 1.5px solid var(--staff) !important; box-shadow: 0 0 15px var(--staff-glow); }
-    .staff-badge { background: var(--staff); color: black; padding: 2px 6px; border-radius: 4px; font-weight: 900; font-size: 10px; margin-left: 5px; vertical-align: middle; }
-    .btn { background: var(--brand); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-    .auth-input, textarea { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); border-radius: 8px; box-sizing: border-box; outline: none; }
-    .nav-item { padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-    .nav-item.active { background: var(--brand); color: white; }
-    .xp-bar-bg { background: rgba(255,255,255,0.1); height: 6px; border-radius: 10px; margin-top: 8px; overflow: hidden; }
-    .xp-bar-fill { background: var(--brand); height: 100%; transition: width 0.5s; }
-    .active-box { margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; }
-    .active-user { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 5px; }
-    .dot { width: 7px; height: 7px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 5px #4ade80; }
-    #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-    .comment-node { margin-top: 10px; padding-left: 10px; border-left: 2px solid var(--border); font-size: 14px; }
-    .delete-btn { float: right; color: #ff4444; cursor: pointer; font-size: 10px; font-weight: bold; background: rgba(255,0,0,0.1); padding: 4px 8px; border-radius: 4px; }
-    .delete-btn:hover { background: #ff4444; color: white; }
+    body { margin: 0; font-family: sans-serif; background: var(--bg-1); color: var(--text-1); height: 100vh; display: flex; overflow: hidden; }
+    
+    /* RAIL */
+    .server-rail { width: 72px; background: var(--bg-1); display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 8px; flex-shrink: 0; }
+    .s-btn { width: 48px; height: 48px; background: var(--bg-3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-weight: bold; font-size: 18px; }
+    .s-btn:hover, .s-btn.active { border-radius: 16px; background: var(--brand); }
+
+    /* SIDEBAR */
+    .sidebar { width: 240px; background: var(--bg-2); display: flex; flex-direction: column; flex-shrink: 0; }
+    .sb-header { height: 48px; padding: 0 16px; display: flex; align-items: center; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.2); justify-content: space-between; }
+    .sb-content { flex: 1; padding: 10px 8px; overflow-y: auto; }
+    .item { padding: 8px; border-radius: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; margin-bottom: 2px; transition: 0.1s; }
+    .item:hover, .item.active { background: #3f4147; color: white; }
+
+    /* CHAT */
+    .chat { flex: 1; background: var(--bg-3); display: flex; flex-direction: column; min-width: 0; }
+    .chat-scroller { flex: 1; overflow-y: auto; padding: 16px; }
+    .msg { display: flex; gap: 14px; margin-bottom: 16px; }
+    .pfp-box { width: 40px; height: 40px; border-radius: 50%; background: #4e5058; flex-shrink: 0; overflow: hidden; }
+    .pfp-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* MEMBERS */
+    .members { width: 240px; background: var(--bg-2); padding: 10px 16px; overflow-y: auto; flex-shrink: 0; border-left: 1px solid rgba(0,0,0,0.1); }
+    .m-title { font-size: 12px; font-weight: bold; color: var(--text-muted); margin: 15px 0 5px; text-transform: uppercase; }
+    .m-user { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 14px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--bg-2); }
+    .on { background: var(--online); } .off { background: var(--offline); }
+
+    /* MODALS */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-box { background: var(--bg-2); padding: 24px; border-radius: 8px; width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    input { width: 100%; padding: 10px; margin: 10px 0; background: var(--bg-1); border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; outline: none; }
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 5px; }
+    .btn-brand { background: var(--brand); color: white; }
   </style>
 </head>
-<body data-theme="dark">
+<body>
 
-  <div id="auth-screen">
-    <div class="post-card" style="width: 350px; text-align: center;">
-      <h2 style="color:var(--brand)">MingForum</h2>
-      <div id="auth-main">
-        <input type="text" id="auth-user" class="auth-input" placeholder="Username">
-        <input type="password" id="auth-pass" class="auth-input" placeholder="Password">
-        <button class="btn" onclick="handleAuth('login')">Sign In</button>
-        <button class="btn" onclick="handleAuth('signup')" style="background:transparent; border:1px solid var(--border); margin-top:10px;">Sign Up</button>
-        <p onclick="showGuest()" style="cursor:pointer; color:var(--subtext); font-size:12px; margin-top:15px;">Enter as Guest</p>
-      </div>
-      <div id="auth-guest" style="display:none;">
-        <input type="text" id="guest-name" class="auth-input" placeholder="Guest Nickname">
-        <button class="btn" onclick="handleAuth('guest')">Enter</button>
-      </div>
+  <div id="auth" class="modal" style="display:flex">
+    <div class="modal-box">
+      <h2 style="text-align:center; color:var(--brand)">MingCord</h2>
+      <input id="u" placeholder="Username">
+      <input id="p" type="password" placeholder="Password (Optional)">
+      <button class="btn btn-brand" onclick="login()">Connect</button>
     </div>
   </div>
 
-  <div id="app-screen">
-    <nav>
-      <h2 style="color:var(--brand)">MingForum</h2>
-      <div id="nav-general" class="nav-item active" onclick="switchForum('general')">🏠 General</div>
-      <div id="nav-anime" class="nav-item" onclick="switchForum('anime')">📺 Anime</div>
-      <div id="nav-gaming" class="nav-item" onclick="switchForum('gaming')">🎮 Gaming</div>
-      
-      <div class="active-box">
-        <div style="font-size:10px; color:var(--brand); font-weight:bold; margin-bottom:8px;">ACTIVE NOW</div>
-        <div id="active-list"></div>
+  <div id="p-modal" class="modal" onclick="this.style.display='none'">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Profile Settings</h3>
+      <div style="text-align:center; margin-bottom:15px;">
+        <img id="p-preview" style="width:80px; height:80px; border-radius:50%; object-fit:cover; background:#444;">
+        <input type="file" id="p-file" style="display:none" onchange="uploadPFP(this)">
+        <button class="btn" style="background:#444; color:white; font-size:12px; margin-top:10px;" onclick="document.getElementById('p-file').click()">Pick Image from PC</button>
       </div>
-
-      <div style="flex:1"></div>
-      <div class="nav-item" onclick="toggleTheme()" style="background:rgba(255,255,255,0.05)">🌓 Toggle Theme</div>
-      <div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; margin-bottom:10px;">
-        <div id="my-name-side" style="font-weight:bold; font-size:14px;"></div>
-        <div id="my-lvl-side" style="font-size:11px; color:var(--subtext);">Level 1</div>
-        <div class="xp-bar-bg"><div id="xp-fill" class="xp-bar-fill" style="width: 0%"></div></div>
-      </div>
-      <button class="btn" onclick="location.reload()" style="background:none; border:1px solid var(--border)">Logout</button>
-    </nav>
-
-    <div id="forum-container">
-      <header>
-        <span id="header-title" style="font-weight:bold;">GENERAL</span>
-        <span id="my-name-display" style="cursor:pointer; font-weight:bold;" onclick="openProfile(userObj.key)"></span>
-      </header>
-      <div id="main-feed">
-        <div class="post-card">
-          <input type="text" id="post-t" class="auth-input" placeholder="Title">
-          <textarea id="post-c" rows="2" placeholder="Start Minging..."></textarea>
-          <button class="btn" onclick="createPost()">Post</button>
-        </div>
-        <div id="posts-list" style="width:100%; display:flex; flex-direction:column; gap:20px; align-items:center;"></div>
-      </div>
+      <button class="btn btn-brand" onclick="document.getElementById('p-modal').style.display='none'">Close</button>
     </div>
   </div>
 
-  <div id="profile-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:6000; align-items:center; justify-content:center;" onclick="this.style.display='none'">
-    <div class="post-card" style="width:340px; text-align:center;" onclick="event.stopPropagation()">
-      <div style="font-size: 50px;">👤</div>
-      <h2 id="view-name"></h2>
-      <p id="view-level" style="color:var(--brand); font-weight:bold;"></p>
-      <div style="margin:20px 0;">Followers: <b id="view-followers" style="font-size:20px;">0</b></div>
-      <button class="btn" onclick="toggleFollow()">Follow</button>
-      <button id="staff-boost-btn" class="btn" style="display:none; background:var(--staff); color:black; margin-top:10px;" onclick="staffBoost()">+10 Followers (Staff)</button>
+  <nav class="server-rail">
+    <div class="s-btn" onclick="showHome()">H</div>
+    <div style="width:32px; height:2px; background:#35363c; margin: 4px 0;"></div>
+    <div id="serv-list"></div>
+    <div class="s-btn" style="color:var(--online)" onclick="actionServer()">+</div>
+  </nav>
+
+  <aside class="sidebar">
+    <div class="sb-header" id="side-title">Direct Messages</div>
+    <div class="sb-content" id="side-list"></div>
+    <div style="background:var(--bg-4); padding:10px; display:flex; align-items:center; gap:8px; cursor:pointer;" onclick="openProfile()">
+      <div class="pfp-box" style="width:32px; height:32px;" id="my-pfp-box">
+        <img id="my-pfp-img" src="">
+      </div>
+      <div id="my-name" style="font-size:13px; font-weight:bold;">User</div>
     </div>
-  </div>
+  </aside>
+
+  <main class="chat">
+    <div class="sb-header">
+        <span id="chat-title">Welcome</span>
+        <button id="inv-btn" style="display:none; background:#444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;" onclick="showInv()">Invite Code</button>
+    </div>
+    <div class="chat-scroller" id="msg-mount"></div>
+    <div style="padding: 16px;">
+      <input id="msg-in" placeholder="Message..." onkeypress="if(event.key==='Enter') send()">
+    </div>
+  </main>
+
+  <aside class="members">
+    <div id="member-list"></div>
+  </aside>
 
   <script>
     const firebaseConfig = {
@@ -127,179 +117,159 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let userObj = null, currentForum = 'general', viewingKey = null;
+    let user = null, curView = 'home', curId = null;
 
-    function toggleTheme() {
-      const b = document.body;
-      b.setAttribute('data-theme', b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-    }
-
-    function getLvlInfo(xp) {
-      let lvl = Math.floor((xp || 0) / 100) + 1;
-      return { lvl: "Level " + lvl, progress: (xp % 100) };
-    }
-
-    function showGuest() {
-      document.getElementById('auth-main').style.display = 'none';
-      document.getElementById('auth-guest').style.display = 'block';
-    }
-
-    function handleAuth(type) {
-      let name = (type === 'guest') ? document.getElementById('guest-name').value.trim() : document.getElementById('auth-user').value.trim();
-      let pass = document.getElementById('auth-pass').value;
-      if(!name) return;
-      if (type === 'guest' && name.toLowerCase() === 'mings') { alert("Reserved Staff name."); return; }
-      const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-      if(type === 'guest') {
-        userObj = { name: name, key: 'guest_'+Date.now(), isGuest: true, xp: 0 };
-        enterApp();
-        return;
-      }
-      db.ref('users/'+key).once('value').then(snap => {
-        if(type === 'signup') {
-          if(snap.exists()) return alert("Taken");
-          const d = { name, password: pass, xp: 0, followers: 0 };
-          db.ref('users/'+key).set(d).then(() => { userObj = d; userObj.key = key; enterApp(); });
+    function login() {
+      const u = document.getElementById('u').value.toLowerCase().trim();
+      if(!u) return;
+      db.ref('users/'+u).once('value', s => {
+        if(s.exists()){
+            user = s.val();
         } else {
-          if(snap.exists() && snap.val().password === pass) { 
-            userObj = snap.val(); userObj.key = key; enterApp(); 
-          } else alert("Invalid Login");
+            user = { name: u, role: u === 'mings' ? 'Owner' : 'Member', pfp: "", servers: [] };
+            db.ref('users/'+u).set(user);
         }
+        startApp();
       });
     }
 
-    function enterApp() {
-      document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('app-screen').style.display = 'flex';
-      updateSidebar();
-      switchForum('general');
-      startPresence();
-    }
+    function startApp() {
+      document.getElementById('auth').style.display = 'none';
+      // Real-time listener for user data (PFP and Server list)
+      db.ref('users/'+user.name).on('value', snap => {
+        user = snap.val();
+        document.getElementById('my-name').innerText = user.name;
+        document.getElementById('my-pfp-img').src = user.pfp || "https://www.gravatar.com/avatar/?d=mp";
+        loadServers();
+      });
 
-    function startPresence() {
-      const pRef = db.ref('presence/' + userObj.key);
-      pRef.set({ name: userObj.name, lastSeen: Date.now() });
+      const pRef = db.ref('presence/'+user.name);
+      pRef.set({ status: 'on', pfp: user.pfp || '' });
       pRef.onDisconnect().remove();
-      setInterval(() => pRef.update({ lastSeen: Date.now() }), 10000);
-      db.ref('presence').on('value', snap => {
-        const list = document.getElementById('active-list');
-        list.innerHTML = "";
-        snap.forEach(u => { if (Date.now() - u.val().lastSeen < 60000) list.innerHTML += `<div class="active-user"><div class="dot"></div>${u.val().name}</div>`; });
-      });
-    }
-
-    function updateSidebar() {
-      const info = getLvlInfo(userObj.xp);
-      document.getElementById('my-name-display').innerText = userObj.name;
-      document.getElementById('my-name-side').innerText = userObj.name;
-      document.getElementById('my-lvl-side').innerText = info.lvl;
-      document.getElementById('xp-fill').style.width = info.progress + "%";
-    }
-
-    function switchForum(n) {
-      currentForum = n;
-      document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-      document.getElementById('nav-'+n).classList.add('active');
-      document.getElementById('header-title').innerText = n.toUpperCase();
-      loadForum(n);
-    }
-
-    function loadForum(n) {
-      const list = document.getElementById('posts-list');
-      list.innerHTML = "";
-      db.ref('forums/'+n).off();
       
-      // Listener for adding posts
-      db.ref('forums/'+n).on('child_added', snap => {
-        const p = snap.val();
-        db.ref('users/'+p.userKey).once('value').then(uSnap => {
-          const ud = uSnap.val() || {xp:0};
-          const isStaff = p.user.toLowerCase() === 'mings' && !p.isGuest;
-          const iAmStaff = userObj.name.toLowerCase() === 'mings' && !userObj.isGuest;
-          
-          const card = document.createElement('div');
-          card.className = `post-card ${isStaff ? 'staff-post' : ''}`;
-          card.id = `post-${snap.key}`;
-          card.innerHTML = `
-            ${iAmStaff ? `<span class="delete-btn" onclick="deletePost('${snap.key}')">DELETE</span>` : ''}
-            <div style="font-size:12px; margin-bottom:10px; color:var(--subtext)">
-              <span class="name-wrapper" onclick="openProfile('${p.userKey}')">${p.user}</span>
-              ${isStaff ? '<span class="staff-badge">STAFF</span>' : ''}
-              <span style="margin-left:8px; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">${getLvlInfo(ud.xp).lvl}</span>
-            </div>
-            <div style="font-weight:bold; font-size:18px;">${p.title}</div>
-            <div style="margin:10px 0;">${p.content}</div>
-            <div id="coms-sec-${snap.key}">
-              <div style="display:flex; gap:5px;">
-                <input type="text" id="in-${snap.key}" class="auth-input" style="margin:0; flex:1; height:35px;" placeholder="Reply...">
-                <button class="btn" onclick="addComment('${snap.key}')" style="width:60px; height:35px; padding:0;">Send</button>
-              </div>
-              <div id="coms-${snap.key}"></div>
-            </div>`;
-          list.prepend(card);
-          loadComments(snap.key);
+      showHome();
+    }
+
+    function showHome() {
+      curView = 'home'; curId = null;
+      document.getElementById('side-title').innerText = 'Home';
+      document.getElementById('chat-title').innerText = 'Global Lounge';
+      document.getElementById('inv-btn').style.display = 'none';
+      document.getElementById('side-list').innerHTML = `<div class="item active"># global-chat</div>`;
+      loadMessages('global_chat');
+      syncGlobalMembers();
+    }
+
+    function actionServer() {
+      const act = prompt("Type 'CREATE' to start a server or 'JOIN' to enter a code:");
+      if(!act) return;
+      if(act.toUpperCase() === 'CREATE') {
+        const n = prompt("Server Name:");
+        if(n) {
+          const ref = db.ref('servers').push();
+          ref.set({ name: n, owner: user.name }).then(() => {
+            const list = user.servers || [];
+            db.ref('users/'+user.name+'/servers').set([...list, ref.key]);
+            alert("Server Created! Invite Code: " + ref.key);
+          });
+        }
+      } else if(act.toUpperCase() === 'JOIN') {
+        const code = prompt("Paste Invite Code:");
+        if(code) {
+          db.ref('servers/'+code).once('value', s => {
+            if(!s.exists()) return alert("Invalid Code");
+            const list = user.servers || [];
+            if(!list.includes(code)) {
+              db.ref('users/'+user.name+'/servers').set([...list, code]);
+            }
+          });
+        }
+      }
+    }
+
+    function loadServers() {
+      const mount = document.getElementById('serv-list'); mount.innerHTML = "";
+      if(!user.servers) return;
+      user.servers.forEach(sid => {
+        db.ref('servers/'+sid).once('value', snap => {
+          const d = snap.val(); if(!d) return;
+          const div = document.createElement('div');
+          div.className = 's-btn'; div.innerText = d.name[0].toUpperCase();
+          div.onclick = () => selectServer(sid, d);
+          mount.appendChild(div);
         });
       });
+    }
 
-      // Listener for deleting posts instantly from UI
-      db.ref('forums/'+n).on('child_removed', snap => {
-        const el = document.getElementById(`post-${snap.key}`);
-        if(el) el.remove();
+    function selectServer(id, data) {
+      curId = id; curView = 'server';
+      document.getElementById('side-title').innerText = data.name;
+      document.getElementById('chat-title').innerText = "# general";
+      document.getElementById('inv-btn').style.display = 'block';
+      document.getElementById('side-list').innerHTML = `<div class="item active"># general</div>`;
+      loadMessages('srv_msgs/' + id);
+      syncServerMembers();
+    }
+
+    function loadMessages(path) {
+      const mount = document.getElementById('msg-mount'); mount.innerHTML = "";
+      db.ref(path).off();
+      db.ref(path).on('child_added', snap => {
+        const m = snap.val();
+        const color = m.user === 'mings' ? 'var(--owner)' : 'inherit';
+        mount.innerHTML += `
+          <div class="msg">
+            <div class="pfp-box"><img src="${m.pfp || 'https://www.gravatar.com/avatar/?d=mp'}"></div>
+            <div>
+              <b style="color:${color}">${m.user}</b>
+              <div style="font-size:15px; margin-top:2px;">${m.text}</div>
+            </div>
+          </div>`;
+        mount.scrollTop = mount.scrollHeight;
       });
     }
 
-    function deletePost(key) {
-      if(confirm("Are you sure you want to delete this post?")) {
-        db.ref('forums/'+currentForum+'/'+key).remove();
-      }
-    }
-
-    function createPost() {
-      const t = document.getElementById('post-t').value, c = document.getElementById('post-c').value;
-      if(!t || !c) return;
-      db.ref('forums/'+currentForum).push({ user: userObj.name, userKey: userObj.key, isGuest: !!userObj.isGuest, title: t, content: c });
-      if(!userObj.isGuest) { userObj.xp += 10; db.ref('users/'+userObj.key+'/xp').set(userObj.xp); updateSidebar(); }
-      document.getElementById('post-t').value = ""; document.getElementById('post-c').value = "";
-    }
-
-    function addComment(pk) {
-      const inp = document.getElementById('in-'+pk);
-      if(!inp.value.trim()) return;
-      db.ref('comments/'+pk).push({ user: userObj.name, text: inp.value });
-      if(!userObj.isGuest) { userObj.xp += 5; db.ref('users/'+userObj.key+'/xp').set(userObj.xp); updateSidebar(); }
+    function send() {
+      const inp = document.getElementById('msg-in'); if(!inp.value.trim()) return;
+      const path = curView === 'server' ? 'srv_msgs/'+curId : 'global_chat';
+      db.ref(path).push({ user: user.name, text: inp.value, pfp: user.pfp || '' });
       inp.value = "";
     }
 
-    function loadComments(pk) {
-      db.ref('comments/'+pk).on('child_added', snap => {
-        const d = snap.val();
-        const div = document.createElement('div');
-        div.className = 'comment-node';
-        div.innerHTML = `<b>${d.user}:</b> ${d.text}`;
-        document.getElementById('coms-'+pk).appendChild(div);
+    function uploadPFP(input) {
+      const file = input.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64 = e.target.result;
+        db.ref('users/'+user.name).update({ pfp: base64 });
+        db.ref('presence/'+user.name).update({ pfp: base64 });
+        document.getElementById('p-preview').src = base64;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function openProfile() {
+      document.getElementById('p-modal').style.display = 'flex';
+      document.getElementById('p-preview').src = user.pfp || "https://www.gravatar.com/avatar/?d=mp";
+    }
+
+    function syncGlobalMembers() {
+      db.ref('presence').on('value', snap => {
+        const mount = document.getElementById('member-list');
+        mount.innerHTML = `<div class="m-title">Online — ${snap.numChildren()}</div>`;
+        snap.forEach(p => {
+            mount.innerHTML += `<div class="m-user"><div class="status-dot on"></div> ${p.key}</div>`;
+        });
       });
     }
 
-    function openProfile(k) {
-      if (!k || k.startsWith('guest')) return;
-      viewingKey = k;
-      db.ref('users/'+k).on('value', snap => {
-        const d = snap.val(); if(!d) return;
-        document.getElementById('view-name').innerText = d.name;
-        document.getElementById('view-level').innerText = getLvlInfo(d.xp).lvl;
-        document.getElementById('view-followers').innerText = d.followers || 0;
-        document.getElementById('profile-overlay').style.display = 'flex';
-        document.getElementById('staff-boost-btn').style.display = (userObj.name.toLowerCase() === 'mings' && !userObj.isGuest) ? 'block' : 'none';
-      });
+    function syncServerMembers() {
+        // Simple logic for Pro version: Show everyone online in the sidebar when in a server
+        syncGlobalMembers(); 
     }
 
-    function toggleFollow() {
-      if(viewingKey === userObj.key) return alert("Self-following is disabled.");
-      db.ref('users/'+viewingKey+'/followers').transaction(c => (c || 0) + 1);
-    }
-
-    function staffBoost() { db.ref('users/'+viewingKey+'/followers').transaction(c => (c || 0) + 10); }
+    function showInv() { prompt("Share this code to invite friends:", curId); }
   </script>
 </body>
 </html>
